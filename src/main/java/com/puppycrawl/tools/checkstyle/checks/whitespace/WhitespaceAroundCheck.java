@@ -179,6 +179,10 @@ public class WhitespaceAroundCheck extends Check {
     private boolean allowEmptyLoops;
     /** whether or not to ignore a colon in a enhanced for loop */
     private boolean ignoreEnhancedForColon = true;
+    /** Whether or not empty catch blocks are allowed*/
+    private boolean allowEmptyCatchBlocks;
+    /** Whether or not empty lambdas are allowed*/
+    private boolean allowEmptyLambdas;
 
     @Override
     public int[] getDefaultTokens() {
@@ -334,6 +338,22 @@ public class WhitespaceAroundCheck extends Check {
         allowEmptyLoops = allow;
     }
 
+    /**
+     * Sets whether or not empty loop bodies are allowed.
+     * @param allow <code>true</code> to allow empty loops bodies.
+     */
+    public void setAllowEmptyCatchBlocks(boolean allow) {
+        allowEmptyCatchBlocks = allow;
+    }
+
+    /**
+     * Sets whether or not empty loop bodies are allowed.
+     * @param allow <code>true</code> to allow empty loops bodies.
+     */
+    public void setAllowEmptyLambdas(boolean allow) {
+        allowEmptyLambdas = allow;
+    }
+
     @Override
     public void visitToken(DetailAST ast) {
         final int currentType = ast.getType();
@@ -371,10 +391,12 @@ public class WhitespaceAroundCheck extends Check {
             }
         }
 
-        // Checks if empty methods, ctors or loops are allowed.
+        // Checks if empty methods, ctors, loops, catch blocks, or lambdas are allowed.
         if (isEmptyMethodBlock(ast, parentType)
                 || isEmptyCtorBlock(ast, parentType)
-                || isEmptyLoop(ast, parentType)) {
+                || isEmptyLoop(ast, parentType)
+                || isEmptyCatchBlock(ast, parentType)
+                || isEmptyLambda(ast, parentType)) {
             return;
         }
 
@@ -452,6 +474,30 @@ public class WhitespaceAroundCheck extends Check {
                             parentType, TokenTypes.LITERAL_WHILE)
                             || isEmptyBlock(ast,
                                     parentType, TokenTypes.LITERAL_DO));
+    }
+
+    /**
+     * @param ast the <code>DetailAST</code> to test.
+     * @param parentType the token type of <code>ast</code>'s parent.
+     * @return <code>true</code> if <code>ast</code> makes up part of an
+     *         allowed empty catch block.
+     */
+    private boolean isEmptyCatchBlock(DetailAST ast, int parentType) {
+        return allowEmptyCatchBlocks
+            && isEmptyBlock(ast, parentType, TokenTypes.LITERAL_CATCH);
+    }
+
+    /**
+     * Test if the given <code>DetailAST</code> is part of an allowed empty
+     * constructor (ctor) block.
+     * @param ast the <code>DetailAST</code> to test.
+     * @param parentType the token type of <code>ast</code>'s parent.
+     * @return <code>true</code> if <code>ast</code> makes up part of an
+     *         allowed empty constructor block.
+     */
+    private boolean isEmptyLambda(DetailAST ast, int parentType) {
+        return allowEmptyLambdas
+            && isEmptyBlock(ast, parentType, TokenTypes.LAMBDA);
     }
 
     /**

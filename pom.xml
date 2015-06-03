@@ -252,7 +252,7 @@
             <targetJdk>1.7</targetJdk>
             <minimumTokens>20</minimumTokens>
             <skipEmptyReport>false</skipEmptyReport>
-            <failOnViolation>true</failOnViolation>
+            <failOnViolation>false</failOnViolation>
             <printFailingErrors>true</printFailingErrors>
             <!--<includeTests>true</includeTests>-->
             <rulesets>
@@ -628,7 +628,7 @@
        <configuration>
         <format>xml</format>
         <check>
-         <haltOnFailure>true</haltOnFailure>
+         <haltOnFailure>false</haltOnFailure>
          <branchRate>100</branchRate>
          <lineRate>100</lineRate>
          <totalBranchRate>82</totalBranchRate>
